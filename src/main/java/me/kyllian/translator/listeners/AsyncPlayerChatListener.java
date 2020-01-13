@@ -39,6 +39,7 @@ public class AsyncPlayerChatListener implements Listener {
             if (!plugin.getDataHandler().getData().getBoolean(player.getUniqueId().toString() + ".enabled", true)) return;
             if (recipient != player) event.getRecipients().remove(recipient);
             PlayerData recipientData = plugin.getPlayerData(recipient.getUniqueId());
+            if (recipientData.getLanguage().equals(Language.en) || recipientData.getLanguage().equals(Language.unknown)) return;
             try {
                 String translatedMessage = playerData.getLanguage() == recipientData.getLanguage() ?
                         event.getMessage() :

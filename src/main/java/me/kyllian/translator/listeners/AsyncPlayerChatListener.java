@@ -36,7 +36,7 @@ public class AsyncPlayerChatListener implements Listener {
         clonedList.forEach(recipient -> {
             if (player instanceof Player) return;
             if (player == recipient) return;
-            if (plugin.getDataHandler().getData().isBoolean(player.getUniqueId().toString() + ".enabled") && !plugin.getDataHandler().getData().getBoolean(player.getUniqueId().toString() + ".enabled")) return;
+            if (!plugin.getDataHandler().getData().getBoolean(player.getUniqueId().toString() + ".enabled", true)) return;
             if (recipient != player) event.getRecipients().remove(recipient);
             PlayerData recipientData = plugin.getPlayerData(recipient.getUniqueId());
             try {

@@ -23,23 +23,26 @@ public class AsyncPlayerChatListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+        ArrayList<String> names = new ArrayList<String>();
+        for (Player p : event.getRecipients()) {
+            names.add(p.getName());
+        }
+        System.out.println("Processing chat event for: " + event.getPlayer().getName() + "to recipients: " + String.join(",",names) + " with body: " + event.getMessage());
         PlayerData playerData = plugin.getPlayerData(player.getUniqueId());
-        event.getRecipients().forEach(test -> {
-
-        });
 
         ArrayList<Player> clonedList = new ArrayList<>(event.getRecipients());
 
         clonedList.forEach(recipient -> {
-            if (player == recipient) return;
-            if (!plugin.getDataHandler().getData().getBoolean(player.getUniqueId().toString() + ".enabled")) return;
-            if (recipient != player) event.getRecipients().remove(recipient);
+            if (player == recipient) return; // If the sender is the recipient.
+            if (recipient != player) event.getRecipients().remove(recipient); // If the recipient is not the player.
             PlayerData recipientData = plugin.getPlayerData(recipient.getUniqueId());
             try {
                 String translatedMessage = playerData.getLanguage() == recipientData.getLanguage() ?
                         event.getMessage() :
                         plugin.getTranslationHandler().translate(event.getMessage(), playerData.getLanguage(), recipientData.getLanguage(), plugin.getApiKey());
-                event.setMessage(event.getFormat().replace("%1$s", player.getDisplayName()).replace("%2$s", translatedMessage));
+                //recipient.sendMessage(translatedMessage);
+                System.out.println("Processing chat event for: " + event.getPlayer().getName() + "to recipients: " + recipient.getName() + " with translationResult: " + translatedMessage);
+
             } catch (Exception exc) {
                 exc.printStackTrace();
             }

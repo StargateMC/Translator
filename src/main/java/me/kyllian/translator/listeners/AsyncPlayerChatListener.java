@@ -7,8 +7,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import github.scarsz.discordsrv.api.events.GameChatMessagePreProcessEvent;
 
 import java.util.ArrayList;
+import me.kyllian.translator.utils.Language;
 import org.bukkit.event.EventPriority;
 
 public class AsyncPlayerChatListener implements Listener {
@@ -23,29 +25,37 @@ public class AsyncPlayerChatListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        ArrayList<String> names = new ArrayList<String>();
-        for (Player p : event.getRecipients()) {
-            names.add(p.getName());
-        }
-        System.out.println("Processing chat event for: " + event.getPlayer().getName() + "to recipients: " + String.join(",",names) + " with body: " + event.getMessage());
         PlayerData playerData = plugin.getPlayerData(player.getUniqueId());
+        event.getRecipients().forEach(test -> {
+
+        });
 
         ArrayList<Player> clonedList = new ArrayList<>(event.getRecipients());
 
         clonedList.forEach(recipient -> {
-            if (player == recipient) return; // If the sender is the recipient.
-            if (recipient != player) event.getRecipients().remove(recipient); // If the recipient is not the player.
+            if (player instanceof Player) return;
+            if (player == recipient) return;
+            if (!plugin.getDataHandler().getData().getBoolean(player.getUniqueId().toString() + ".enabled")) return;
+            if (recipient != player) event.getRecipients().remove(recipient);
             PlayerData recipientData = plugin.getPlayerData(recipient.getUniqueId());
             try {
                 String translatedMessage = playerData.getLanguage() == recipientData.getLanguage() ?
                         event.getMessage() :
                         plugin.getTranslationHandler().translate(event.getMessage(), playerData.getLanguage(), recipientData.getLanguage(), plugin.getApiKey());
-                //recipient.sendMessage(translatedMessage);
-                System.out.println("Processing chat event for: " + event.getPlayer().getName() + "to recipients: " + recipient.getName() + " with translationResult: " + translatedMessage);
-
+                recipient.sendMessage(event.getFormat().replace("%1$s", player.getDisplayName()).replace("%2$s", translatedMessage));
             } catch (Exception exc) {
                 exc.printStackTrace();
             }
         });
+    }
+    @EventHandler
+    public void onDiscordSent(GameChatMessagePreProcessEvent event) {
+            try {
+                String translatedMessage = plugin.getTranslationHandler().translate(event.getMessage(), Language.unknown, Language.en, plugin.getApiKey());
+                event.setMessage(translatedMessage);
+            } catch (Exception exc) {
+                System.out.println("Failed to translate message going to discord to english: " + event.getMessage());
+                exc.printStackTrace();
+            }
     }
 }

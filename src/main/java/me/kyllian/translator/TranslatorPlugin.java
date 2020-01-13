@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import github.scarsz.discordsrv.DiscordSRV;
 import me.kyllian.translator.commands.LanguageCommand;
 import me.kyllian.translator.commands.TranslatorCommand;
 import me.kyllian.translator.listeners.AsyncPlayerChatListener;
@@ -22,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.UUID;
+import me.kyllian.translator.listeners.DiscordSRVListener;
 
 public class TranslatorPlugin extends JavaPlugin {
 
@@ -66,7 +68,12 @@ public class TranslatorPlugin extends JavaPlugin {
             Bukkit.getLogger().warning("The API key needs to be entered. Make sure to do so. Disabling plugin until you have a correct API key...");
             Bukkit.getPluginManager().disablePlugin(this);
         }
-
+        try {
+            DiscordSRV.api.subscribe(new DiscordSRVListener(this));            
+            Bukkit.getLogger().info("Successfully registered DiscordSRV Listener!");
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("Failed to register DiscordSRV Listener, exception: " + e.getMessage());
+        }
         if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
             ProtocolLibrary.getProtocolManager().addPacketListener(
                     new PacketAdapter(this, PacketType.Play.Server.CHAT) {

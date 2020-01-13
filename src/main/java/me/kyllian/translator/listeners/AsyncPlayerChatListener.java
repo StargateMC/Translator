@@ -1,5 +1,6 @@
 package me.kyllian.translator.listeners;
 
+import github.scarsz.discordsrv.api.Subscribe;
 import me.kyllian.translator.TranslatorPlugin;
 import me.kyllian.translator.utils.PlayerData;
 import org.bukkit.Bukkit;
@@ -35,7 +36,7 @@ public class AsyncPlayerChatListener implements Listener {
         clonedList.forEach(recipient -> {
             if (player instanceof Player) return;
             if (player == recipient) return;
-            if (!plugin.getDataHandler().getData().getBoolean(player.getUniqueId().toString() + ".enabled")) return;
+            if (plugin.getDataHandler().getData().isBoolean(player.getUniqueId().toString() + ".enabled") && !plugin.getDataHandler().getData().getBoolean(player.getUniqueId().toString() + ".enabled")) return;
             if (recipient != player) event.getRecipients().remove(recipient);
             PlayerData recipientData = plugin.getPlayerData(recipient.getUniqueId());
             try {
@@ -47,15 +48,5 @@ public class AsyncPlayerChatListener implements Listener {
                 exc.printStackTrace();
             }
         });
-    }
-    @EventHandler
-    public void onDiscordSent(GameChatMessagePreProcessEvent event) {
-            try {
-                String translatedMessage = plugin.getTranslationHandler().translate(event.getMessage(), Language.unknown, Language.en, plugin.getApiKey());
-                event.setMessage(translatedMessage);
-            } catch (Exception exc) {
-                System.out.println("Failed to translate message going to discord to english: " + event.getMessage());
-                exc.printStackTrace();
-            }
     }
 }

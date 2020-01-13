@@ -2,7 +2,7 @@ name: Translator
 main: me.kyllian.translator.TranslatorPlugin
 version: 0.083
 description: Translator plugin
-depend: [ProtocolLib]
+depend: [ProtocolLib, DiscordSRV]
 
 commands:
   language:

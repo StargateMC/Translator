@@ -13,3 +13,4 @@ me\kyllian\translator\utils\DataHandler.class
 me\kyllian\translator\TranslatorPlugin.class
 me\kyllian\translator\utils\PlayerData.class
 me\kyllian\translator\TranslatorPlugin$1.class
+me\kyllian\translator\listeners\DiscordSRVListener.class

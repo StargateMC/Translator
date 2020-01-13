@@ -20,6 +20,7 @@ public class TranslationHandler {
         //System.setProperty("http.agent", "Chrome");
         String link = "https://translate.yandex.net/api/v1.5/tr.json/translate?key=%key%&text=%text%&lang=%language%";
         String language;
+        if (to == null || to.equals(Language.unknown)) return message;
         if (from != Language.unknown) language = from.toString() + "-" + to.toString();
         else language = to.toString();
         message = URLEncoder.encode(message, "UTF-8");

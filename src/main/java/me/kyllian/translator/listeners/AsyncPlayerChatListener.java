@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.ArrayList;
+import org.bukkit.event.EventPriority;
 
 public class AsyncPlayerChatListener implements Listener {
 
@@ -19,7 +20,7 @@ public class AsyncPlayerChatListener implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = plugin.getPlayerData(player.getUniqueId());

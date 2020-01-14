@@ -4,6 +4,7 @@ import me.kyllian.translator.TranslatorPlugin;
 import me.kyllian.translator.utils.Language;
 import me.kyllian.translator.utils.PlayerData;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,28 +24,17 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = plugin.getPlayerData(player.getUniqueId());
-        if (player.hasPermission("autocast.update") && plugin.isUpdateCheck()) player.sendMessage(plugin.getUpdateChecker().getUpdateMessage());
-        if (!player.hasPlayedBefore()) {
-            String playerLanguage = player.getLocale();
-            if (playerLanguage == null || Language.valueOf(playerLanguage) == null) {
-                player.sendMessage(plugin.getMessageHandler().getSetLanguageMessage());
-                return;
-            }
-            playerData.setLanguage(Language.valueOf(playerLanguage));
-            plugin.getDataHandler().getData().set(player.getUniqueId().toString() + ".language", playerLanguage);
-            player.sendMessage(plugin.getMessageHandler().getDetectedLanguageMessage(Language.valueOf(playerLanguage)));
-            return;
+        //if (player.hasPermission("autocast.update") && plugin.isUpdateCheck()) player.sendMessage(plugin.getUpdateChecker().getUpdateMessage());
+        String playerLanguage = player.getLocale();
+        String language = plugin.getDataHandler().getData().getString(player.getUniqueId().toString() + ".language", playerLanguage);
+        try {            
+            playerData.setLanguage(Language.valueOf(language));
+            plugin.getDataHandler().getData().set(player.getUniqueId().toString() + ".language", language); // Default to locale.            
+            player.sendMessage(ChatColor.GOLD + "Language loaded as: " + ChatColor.GREEN + playerData.getLanguage().name() + ChatColor.GOLD + ". Change it with the /language command.");
+        } catch (Exception e) {
+            player.sendMessage(ChatColor.RED + "Language failed to load. Defaulted to English, Set it with the /language command.");
+            playerData.setLanguage(Language.en);
+            plugin.getDataHandler().getData().set(player.getUniqueId().toString() + ".language", playerData.getLanguage().name()); 
         }
-        if (plugin.getDataHandler().getData().get(player.getUniqueId().toString()) == null) {
-            player.sendMessage(plugin.getMessageHandler().getSetLanguageMessage());
-            plugin.getDataHandler().getData().set(player.getUniqueId().toString() + ".language", "unknown");
-            return;
-        }
-        String language = plugin.getDataHandler().getData().getString(player.getUniqueId().toString() + ".language");
-        if (language == null || language.equalsIgnoreCase("unknown")) {
-            player.sendMessage(plugin.getMessageHandler().getSetLanguageMessage());
-            return;
-        }
-        playerData.setLanguage(Language.valueOf(language));
     }
 }

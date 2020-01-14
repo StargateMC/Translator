@@ -1,0 +1,13 @@
+name: Translator
+main: me.kyllian.translator.TranslatorPlugin
+version: 0.083
+description: Translator plugin
+depend: [ProtocolLib, DiscordSRV]
+
+commands:
+  language:
+    usage: /<command>
+    aliases: [lang]
+  translator:
+    usage: /<command>
+    aliases: [translate]

@@ -74,76 +74,76 @@ public class TranslatorPlugin extends JavaPlugin {
         } catch (Exception e) {
             Bukkit.getLogger().warning("Failed to register DiscordSRV Listener, exception: " + e.getMessage());
         }
-//        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
-//            ProtocolLibrary.getProtocolManager().addPacketListener(
-//                    new PacketAdapter(this, PacketType.Play.Server.CHAT) {
-//                        @Override
-//                        public void onPacketSending(PacketEvent event) {
-//                            Player player = event.getPlayer();
-//                            if (!getEnabled(player)) return;
-//                            PlayerData playerData = getPlayerData(player.getUniqueId());
-//                            if (playerData.getLanguage() == Language.unknown) return;
-//                            try {
-//                                PacketContainer packet = event.getPacket();
-//                                String initialJsonS = ((WrappedChatComponent) packet.getChatComponents().read(0)).getJson();
-//                                if ((initialJsonS != null) && (!initialJsonS.equals("")) && (!initialJsonS.equals("\"\""))) {
-//                                    JsonObject packetJson = (JsonObject) new Gson().fromJson(initialJsonS, JsonObject.class);
-//                                    if (packetJson.get("extra") != null) {
-//                                        JsonArray jsonArray = packetJson.get("extra").getAsJsonArray();
-//                                        JsonArray newArray = new JsonArray();
-//                                        StringBuilder sb = new StringBuilder();
-//                                        for (JsonElement element : jsonArray) {
-//                                            JsonObject object = element.getAsJsonObject();
-//                                            sb.append(object.get("text").getAsString());
-//                                        }
-//                                        String finalString = sb.toString().trim();
-//                                        Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
-//                                            if (finalString.contains(onlinePlayer.getDisplayName())) return;
-//                                        });
-//                                        for (JsonElement element : jsonArray) {
-//                                            JsonObject newObject = new JsonObject();
-//                                            String initialMsg;
-//                                            if (!element.isJsonObject()) {
-//                                                initialMsg = element.getAsString();
-//                                            } else {
-//                                                newObject = element.getAsJsonObject();
-//                                                initialMsg = newObject.get("text").getAsString();
-//                                            }
-//                                            if ((initialMsg != null) && (!initialMsg.equals(""))) {
-//                                                String msg = initialMsg.startsWith(" ") ? initialMsg.substring(1) : initialMsg;
-//                                                String tMsg = getTranslationHandler().translate(initialMsg, Language.unknown, playerData.getLanguage(), getApiKey());
-//
-//                                                newObject.addProperty("text", tMsg + " ");
-//                                                if (newObject.get("hoverEvent") == null) {
-//                                                    if (!msg.equals(tMsg.startsWith(" ") ? tMsg.substring(1) : tMsg)) {
-//                                                        JsonObject hoverInfo = new JsonObject();
-//                                                        hoverInfo.addProperty("action", "show_text");
-//
-//                                                        JsonObject hoverText = new JsonObject();
-//                                                        hoverText.addProperty("text", msg);
-//                                                        hoverInfo.add("value", hoverText);
-//
-//                                                        newObject.add("hoverEvent", hoverInfo);
-//                                                    }
-//                                                }
-//                                            }
-//                                            newArray.add(newObject);
-//                                        }
-//                                        packetJson.remove("extra");
-//                                        packetJson.add("extra", newArray);
-//                                    }
-//                                    packet.getChatComponents().write(0, WrappedChatComponent.fromJson(packetJson.toString()));
-//                                }
-//                            } catch (Exception exc) {
-//
-//                            }
-//                        }
-//                    }
-//            );
-//        } else {
-//            Bukkit.getLogger().warning("ProtocolLib API is needed for this plugin to work. Please download it on Spigot!");
-//            Bukkit.getPluginManager().disablePlugin(this);
-//        }
+        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
+            ProtocolLibrary.getProtocolManager().addPacketListener(
+                    new PacketAdapter(this, PacketType.Play.Server.CHAT) {
+                        @Override
+                        public void onPacketSending(PacketEvent event) {
+                            Player player = event.getPlayer();
+                            if (!getEnabled(player)) return;
+                            PlayerData playerData = getPlayerData(player.getUniqueId());
+                            if (playerData.getLanguage() == Language.unknown) return;
+                            try {
+                                PacketContainer packet = event.getPacket();
+                                String initialJsonS = ((WrappedChatComponent) packet.getChatComponents().read(0)).getJson();
+                                if ((initialJsonS != null) && (!initialJsonS.equals("")) && (!initialJsonS.equals("\"\""))) {
+                                    JsonObject packetJson = (JsonObject) new Gson().fromJson(initialJsonS, JsonObject.class);
+                                    if (packetJson.get("extra") != null) {
+                                        JsonArray jsonArray = packetJson.get("extra").getAsJsonArray();
+                                        JsonArray newArray = new JsonArray();
+                                        StringBuilder sb = new StringBuilder();
+                                        for (JsonElement element : jsonArray) {
+                                            JsonObject object = element.getAsJsonObject();
+                                            sb.append(object.get("text").getAsString());
+                                        }
+                                        String finalString = sb.toString().trim();
+                                        Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
+                                            if (finalString.contains(onlinePlayer.getDisplayName())) return;
+                                        });
+                                        for (JsonElement element : jsonArray) {
+                                            JsonObject newObject = new JsonObject();
+                                            String initialMsg;
+                                            if (!element.isJsonObject()) {
+                                                initialMsg = element.getAsString();
+                                            } else {
+                                                newObject = element.getAsJsonObject();
+                                                initialMsg = newObject.get("text").getAsString();
+                                            }
+                                            if ((initialMsg != null) && (!initialMsg.equals(""))) {
+                                                String msg = initialMsg.startsWith(" ") ? initialMsg.substring(1) : initialMsg;
+                                                String tMsg = getTranslationHandler().translate(initialMsg, Language.unknown, playerData.getLanguage(), getApiKey());
+
+                                                newObject.addProperty("text", tMsg + " ");
+                                                if (newObject.get("hoverEvent") == null) {
+                                                    if (!msg.equals(tMsg.startsWith(" ") ? tMsg.substring(1) : tMsg)) {
+                                                        JsonObject hoverInfo = new JsonObject();
+                                                        hoverInfo.addProperty("action", "show_text");
+
+                                                        JsonObject hoverText = new JsonObject();
+                                                        hoverText.addProperty("text", msg);
+                                                        hoverInfo.add("value", hoverText);
+
+                                                        newObject.add("hoverEvent", hoverInfo);
+                                                    }
+                                                }
+                                            }
+                                            newArray.add(newObject);
+                                        }
+                                        packetJson.remove("extra");
+                                        packetJson.add("extra", newArray);
+                                    }
+                                    packet.getChatComponents().write(0, WrappedChatComponent.fromJson(packetJson.toString()));
+                                }
+                            } catch (Exception exc) {
+
+                            }
+                        }
+                    }
+            );
+        } else {
+            Bukkit.getLogger().warning("ProtocolLib API is needed for this plugin to work. Please download it on Spigot!");
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
     }
 
     public void onDisable() {
